@@ -35,21 +35,19 @@ public class SpoiledUtil {
             int currentYear = (int) (world.getTimeOfDay() / (FabricSeasons.getCurrentSeason(world).getSeasonLength() * 4));
             String currentSeason = FabricSeasons.getCurrentSeason(world).asString();
 
-            int yearDiff = currentYear - itemYear;
-
-            // Determine the number of seasons within the years that have passed
+            // Determine the number of seasons that have passed
             int seasonsPassed = 0;
 
             int oldSeasonIndex = SpoiledZMain.SEASONS.indexOf(itemSeason);
             int currentSeasonIndex = SpoiledZMain.SEASONS.indexOf(currentSeason);
 
             if (oldSeasonIndex != -1 && currentSeasonIndex != -1) {
-                if (yearDiff > 0) {
-                    seasonsPassed += yearDiff * SpoiledZMain.SEASONS.size();
-                    seasonsPassed += (currentSeasonIndex - oldSeasonIndex + SpoiledZMain.SEASONS.size()) % SpoiledZMain.SEASONS.size();
-                } else if (yearDiff == 0) {
-                    seasonsPassed = (currentSeasonIndex - oldSeasonIndex + SpoiledZMain.SEASONS.size()) % SpoiledZMain.SEASONS.size();
-                }
+                int seasonCount = SpoiledZMain.SEASONS.size();
+
+                int storedSeasonNumber = itemYear * seasonCount + oldSeasonIndex;
+                int currentSeasonNumber = currentYear * seasonCount + currentSeasonIndex;
+
+                seasonsPassed = currentSeasonNumber - storedSeasonNumber;
             }
             int returnSpoilage = (int) (seasonsPassed / ((float) ConfigInit.CONFIG.seasonSpoilage / 4));
             return returnSpoilage > 4 ? 4 : returnSpoilage;
