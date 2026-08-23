@@ -28,6 +28,11 @@ public class SpoiledUtil {
 
     // 0 = 0%, 1=25%, 2=50%, 3=75%, 4=100%
     public static int getSpoilingTime(World world, ItemStack stack) {
+        if (stack != null && !isSpoilable(stack)) {
+            clearSpoilage(stack);
+            return -1;
+        }
+
         if (world != null && stack != null && stack.hasNbt() && stack.getNbt().contains("Season")) {
             String itemSeason = stack.getNbt().getString("Season");
             int itemYear = stack.getNbt().getInt("Year");
@@ -99,6 +104,19 @@ public class SpoiledUtil {
             return true;
         }
         return false;
+    }
+
+    private static void clearSpoilage(ItemStack stack) {
+        if (!stack.hasNbt()) {
+            return;
+        }
+
+        NbtCompound nbt = stack.getNbt();
+        nbt.remove("Season");
+        nbt.remove("Year");
+        if (nbt.isEmpty()) {
+            stack.setNbt(null);
+        }
     }
 
     public static boolean isSpoilable(ItemStack stack) {
